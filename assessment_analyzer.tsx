@@ -65,10 +65,10 @@ const AssessmentAnalyzer = () => {
     }
   };
 
-  const getPersonalInfo = (student) => {
+  const getPersonalInfo = (student: any) => {
     if (!student || !assessmentData) return [];
     
-    const personalInfo = [];
+    const personalInfo: any[] = [];
     const headers = assessmentData.headers;
     
     // Find where question columns start (looking for column "1")
@@ -87,7 +87,7 @@ const AssessmentAnalyzer = () => {
     return personalInfo;
   };
 
-  const calculateDetailedScaleAnalysis = (student) => {
+  const calculateDetailedScaleAnalysis = (student: any) => {
     if (!student || !lookupData || !assessmentData) return [];
 
     // Find all the relevant rows in lookup data
@@ -144,7 +144,7 @@ const AssessmentAnalyzer = () => {
     })).sort((a, b) => a.scale.localeCompare(b.scale));
   };
 
-  const calculateUnattemptedAnalysis = (student) => {
+  const calculateUnattemptedAnalysis = (student: any) => {
     if (!student || !lookupData || !assessmentData) return null;
 
     // Find the strand name row in lookup data
@@ -206,7 +206,7 @@ const AssessmentAnalyzer = () => {
     };
   };
 
-  const calculateScalePerformance = (student) => {
+  const calculateScalePerformance = (student: any) => {
     if (!student || !lookupData || !assessmentData) return [];
 
     // Find the strand row, strand name row, and correct answer row in lookup data
@@ -275,7 +275,7 @@ const AssessmentAnalyzer = () => {
     }).sort((a, b) => a.scale.localeCompare(b.scale));
   };
 
-  const handleStudentSelect = (studentId) => {
+  const handleStudentSelect = (studentId: string) => {
     if (!studentId || !assessmentData) {
       setSelectedStudent(null);
       setSortConfig({});
@@ -312,7 +312,7 @@ const AssessmentAnalyzer = () => {
     }
   };
 
-  const handleSort = (scaleName, column) => {
+  const handleSort = (scaleName: string, column: string) => {
     const currentSort = sortConfig[scaleName];
     let direction = 'asc';
     
@@ -326,7 +326,7 @@ const AssessmentAnalyzer = () => {
     }));
   };
 
-  const getSortedQuestions = (questions, scaleName) => {
+  const getSortedQuestions = (questions: any[], scaleName: string) => {
     const currentSort = sortConfig[scaleName];
     
     if (!currentSort) return questions;
@@ -369,7 +369,7 @@ const AssessmentAnalyzer = () => {
     });
   };
 
-  const SortableHeader = ({ scaleName, column, children, className = '' }) => {
+  const SortableHeader = ({ scaleName, column, children, className = '' }: { scaleName: string; column: string; children: React.ReactNode; className?: string }) => {
     const currentSort = sortConfig[scaleName];
     const isActive = currentSort && currentSort.column === column;
     const direction = isActive ? currentSort.direction : null;
@@ -439,7 +439,7 @@ const AssessmentAnalyzer = () => {
                   type="file"
                   accept=".csv"
                   onChange={(e) => {
-                    const file = e.target.files[0];
+                    const file = e.target.files?.[0];
                     if (file) handleFileUpload(file, 'assessment');
                   }}
                   className="hidden"
@@ -476,7 +476,7 @@ const AssessmentAnalyzer = () => {
                   type="file"
                   accept=".csv"
                   onChange={(e) => {
-                    const file = e.target.files[0];
+                    const file = e.target.files?.[0];
                     if (file) handleFileUpload(file, 'lookup');
                   }}
                   className="hidden"
