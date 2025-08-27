@@ -2,29 +2,29 @@ import React, { useState, useRef } from 'react';
 import { Upload, User, BarChart3, FileText, X, ChevronUp, ChevronDown } from 'lucide-react';
 
 const AssessmentAnalyzer = () => {
-  const [assessmentData, setAssessmentData] = useState(null);
-  const [lookupData, setLookupData] = useState(null);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [studentOptions, setStudentOptions] = useState([]);
+  const [assessmentData, setAssessmentData] = useState<any>(null);
+  const [lookupData, setLookupData] = useState<any>(null);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [studentOptions, setStudentOptions] = useState<any[]>([]);
   const [error, setError] = useState('');
-  const [sortConfig, setSortConfig] = useState({}); // Track sorting for each scale
+  const [sortConfig, setSortConfig] = useState<any>({}); // Track sorting for each scale
   const [dragOver, setDragOver] = useState({ assessment: false, lookup: false });
-  const assessmentFileRef = useRef(null);
-  const lookupFileRef = useRef(null);
+  const assessmentFileRef = useRef<HTMLInputElement>(null);
+  const lookupFileRef = useRef<HTMLInputElement>(null);
 
   // Parse CSV function using Papa Parse pattern
-  const parseCSV = (content) => {
+  const parseCSV = (content: string) => {
     const lines = content.trim().split('\n');
     const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-    const data = [];
+    const data: any[] = [];
     
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-      const row = {};
-      headers.forEach((header, index) => {
+      const row: any = {};
+      headers.forEach((header: string, index: number) => {
         let value = values[index] || '';
         // Try to convert to number if it looks like one
-        if (value !== '' && value !== 'NA' && !isNaN(value) && value !== '1' && value !== '0') {
+        if (value !== '' && value !== 'NA' && !isNaN(Number(value)) && value !== '1' && value !== '0') {
           const num = parseFloat(value);
           if (!isNaN(num)) {
             row[header] = num;
@@ -42,7 +42,7 @@ const AssessmentAnalyzer = () => {
     return { headers, data };
   };
 
-  const handleFileUpload = async (file, type) => {
+  const handleFileUpload = async (file: File, type: string) => {
     try {
       const content = await file.text();
       const parsed = parseCSV(content);
@@ -61,23 +61,23 @@ const AssessmentAnalyzer = () => {
       }
       setError('');
     } catch (err) {
-      setError(`Error parsing ${type} file: ${err.message}`);
+      setError(`Error parsing ${type} file: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
-  const getPersonalInfo = (student) => {
+  const getPersonalInfo = (student: any) => {
     if (!student || !assessmentData) return [];
     
-    const personalInfo = [];
+    const personalInfo: any[] = [];
     const headers = assessmentData.headers;
     
     // Find where question columns start (looking for column "1")
-    const questionStartIndex = headers.findIndex(h => h === '1');
+    const questionStartIndex = headers.findIndex((h: string) => h === '1');
     
     // Get all columns before the questions
     const personalColumns = questionStartIndex > 0 ? headers.slice(0, questionStartIndex) : headers.slice(0, 10);
     
-    personalColumns.forEach(column => {
+    personalColumns.forEach((column: string) => {
       personalInfo.push({
         field: column,
         value: student[column] !== undefined ? student[column] : 'N/A'
@@ -87,22 +87,22 @@ const AssessmentAnalyzer = () => {
     return personalInfo;
   };
 
-  const calculateDetailedScaleAnalysis = (student) => {
+  const calculateDetailedScaleAnalysis = (student: any) => {
     if (!student || !lookupData || !assessmentData) return [];
 
     // Find all the relevant rows in lookup data
-    const strandNameRow = lookupData.data.find(row => row['Question number'] === 'Strand name');
-    const difficultyRow = lookupData.data.find(row => row['Question number'] === 'Question difficulty');
-    const percentageCorrectRow = lookupData.data.find(row => row['Question number'] === 'Percentage correct');
+    const strandNameRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand name');
+    const difficultyRow = lookupData.data.find((row: any) => row['Question number'] === 'Question difficulty');
+    const percentageCorrectRow = lookupData.data.find((row: any) => row['Question number'] === 'Percentage correct');
     
     if (!strandNameRow || !difficultyRow || !percentageCorrectRow) return [];
 
-    const scaleData = {};
+    const scaleData: any = {};
     
     // Get question numbers (columns 1-40)
-    const questionColumns = assessmentData.headers.filter(h => /^\d+$/.test(h));
+    const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
-    questionColumns.forEach(questionNum => {
+    questionColumns.forEach((questionNum: string) => {
       const strandName = strandNameRow[questionNum];
       const difficulty = difficultyRow[questionNum];
       const percentageCorrect = percentageCorrectRow[questionNum];
@@ -138,28 +138,28 @@ const AssessmentAnalyzer = () => {
     });
 
     // Convert to array and sort each scale's questions by question number
-    return Object.entries(scaleData).map(([scaleName, questions]) => ({
+    return Object.entries(scaleData).map(([scaleName, questions]: [string, any]) => ({
       scale: scaleName,
-      questions: questions.sort((a, b) => a.questionNumber - b.questionNumber)
-    })).sort((a, b) => a.scale.localeCompare(b.scale));
+      questions: questions.sort((a: any, b: any) => a.questionNumber - b.questionNumber)
+    })).sort((a: any, b: any) => a.scale.localeCompare(b.scale));
   };
 
-  const calculateUnattemptedAnalysis = (student) => {
+  const calculateUnattemptedAnalysis = (student: any) => {
     if (!student || !lookupData || !assessmentData) return null;
 
     // Find the strand name row in lookup data
-    const strandNameRow = lookupData.data.find(row => row['Question number'] === 'Strand name');
+    const strandNameRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand name');
     
     if (!strandNameRow) return null;
 
-    const unattemptedByScale = {};
+    const unattemptedByScale: any = {};
     let totalUnattempted = 0;
     let totalQuestions = 0;
     
     // Get question numbers (columns 1-40)
-    const questionColumns = assessmentData.headers.filter(h => /^\d+$/.test(h));
+    const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
-    questionColumns.forEach(questionNum => {
+    questionColumns.forEach((questionNum: string) => {
       const strandName = strandNameRow[questionNum];
       const studentAnswer = student[questionNum];
       
@@ -185,7 +185,7 @@ const AssessmentAnalyzer = () => {
 
     // Convert to array format with percentages
     const scaleBreakdown = Object.entries(unattemptedByScale)
-      .map(([scaleName, data]) => ({
+      .map(([scaleName, data]: [string, any]) => ({
         scale: scaleName,
         count: data.count,
         totalInScale: data.totalInScale,
@@ -195,7 +195,7 @@ const AssessmentAnalyzer = () => {
           ((data.count / totalQuestions) * 100).toFixed(1) : '0.0'
       }))
       .filter(item => item.count > 0) // Only show scales with unattempted questions
-      .sort((a, b) => b.count - a.count); // Sort by count descending
+      .sort((a: any, b: any) => b.count - a.count); // Sort by count descending
 
     return {
       totalUnattempted,
@@ -206,22 +206,22 @@ const AssessmentAnalyzer = () => {
     };
   };
 
-  const calculateScalePerformance = (student) => {
+  const calculateScalePerformance = (student: any) => {
     if (!student || !lookupData || !assessmentData) return [];
 
     // Find the strand row, strand name row, and correct answer row in lookup data
-    const strandRow = lookupData.data.find(row => row['Question number'] === 'Strand');
-    const strandNameRow = lookupData.data.find(row => row['Question number'] === 'Strand name');
-    const correctAnswerRow = lookupData.data.find(row => row['Question number'] === 'Correct Answer');
+    const strandRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand');
+    const strandNameRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand name');
+    const correctAnswerRow = lookupData.data.find((row: any) => row['Question number'] === 'Correct Answer');
     
     if (!strandRow || !strandNameRow || !correctAnswerRow) return [];
 
-    const scalePerformance = {};
+    const scalePerformance: any = {};
     
     // Get question numbers (columns 1-40)
-    const questionColumns = assessmentData.headers.filter(h => /^\d+$/.test(h));
+    const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
-    questionColumns.forEach(questionNum => {
+    questionColumns.forEach((questionNum: string) => {
       const strand = strandRow[questionNum];
       const strandName = strandNameRow[questionNum];
       const studentAnswer = student[questionNum];
@@ -251,7 +251,7 @@ const AssessmentAnalyzer = () => {
     });
 
     // Convert to array format with percentages
-    return Object.entries(scalePerformance).map(([scaleName, performance]) => {
+    return Object.entries(scalePerformance).map(([scaleName, performance]: [string, any]) => {
       const attempted = performance.correct + performance.incorrect;
       const overallPercentage = performance.total > 0 ? 
         ((performance.correct / performance.total) * 100) : 0;
@@ -272,34 +272,34 @@ const AssessmentAnalyzer = () => {
         attemptedPercentage: parseFloat(attemptedPercentage.toFixed(1)),
         attemptedRate: parseFloat(attemptedRate.toFixed(1))
       };
-    }).sort((a, b) => a.scale.localeCompare(b.scale));
+    }).sort((a: any, b: any) => a.scale.localeCompare(b.scale));
   };
 
-  const handleStudentSelect = (studentId) => {
+  const handleStudentSelect = (studentId: string) => {
     if (!studentId || !assessmentData) {
       setSelectedStudent(null);
       setSortConfig({});
       return;
     }
 
-    const student = assessmentData.data.find(s => s['Unique ID'] == studentId);
+    const student = assessmentData.data.find((s: any) => s['Unique ID'] == studentId);
     setSelectedStudent(student);
     setSortConfig({}); // Reset sorting when changing students
   };
 
-  const handleDragOver = (e, type) => {
+  const handleDragOver = (e: React.DragEvent, type: string) => {
     e.preventDefault();
-    setDragOver(prev => ({ ...prev, [type]: true }));
+    setDragOver((prev: any) => ({ ...prev, [type]: true }));
   };
 
-  const handleDragLeave = (e, type) => {
+  const handleDragLeave = (e: React.DragEvent, type: string) => {
     e.preventDefault();
-    setDragOver(prev => ({ ...prev, [type]: false }));
+    setDragOver((prev: any) => ({ ...prev, [type]: false }));
   };
 
-  const handleDrop = (e, type) => {
+  const handleDrop = (e: React.DragEvent, type: string) => {
     e.preventDefault();
-    setDragOver(prev => ({ ...prev, [type]: false }));
+    setDragOver((prev: any) => ({ ...prev, [type]: false }));
     
     const files = e.dataTransfer.files;
     if (files.length > 0) {
@@ -312,7 +312,7 @@ const AssessmentAnalyzer = () => {
     }
   };
 
-  const handleSort = (scaleName, column) => {
+  const handleSort = (scaleName: string, column: string) => {
     const currentSort = sortConfig[scaleName];
     let direction = 'asc';
     
@@ -320,13 +320,13 @@ const AssessmentAnalyzer = () => {
       direction = 'desc';
     }
     
-    setSortConfig(prev => ({
+    setSortConfig((prev: any) => ({
       ...prev,
       [scaleName]: { column, direction }
     }));
   };
 
-  const getSortedQuestions = (questions, scaleName) => {
+  const getSortedQuestions = (questions: any[], scaleName: string) => {
     const currentSort = sortConfig[scaleName];
     
     if (!currentSort) return questions;
@@ -369,7 +369,7 @@ const AssessmentAnalyzer = () => {
     });
   };
 
-  const SortableHeader = ({ scaleName, column, children, className = '' }) => {
+  const SortableHeader = ({ scaleName, column, children, className = '' }: { scaleName: string, column: string, children: React.ReactNode, className?: string }) => {
     const currentSort = sortConfig[scaleName];
     const isActive = currentSort && currentSort.column === column;
     const direction = isActive ? currentSort.direction : null;
@@ -439,7 +439,7 @@ const AssessmentAnalyzer = () => {
                   type="file"
                   accept=".csv"
                   onChange={(e) => {
-                    const file = e.target.files[0];
+                    const file = e.target.files?.[0];
                     if (file) handleFileUpload(file, 'assessment');
                   }}
                   className="hidden"
@@ -476,7 +476,7 @@ const AssessmentAnalyzer = () => {
                   type="file"
                   accept=".csv"
                   onChange={(e) => {
-                    const file = e.target.files[0];
+                    const file = e.target.files?.[0];
                     if (file) handleFileUpload(file, 'lookup');
                   }}
                   className="hidden"
@@ -793,19 +793,19 @@ const AssessmentAnalyzer = () => {
                           <div className="bg-green-50 rounded-md p-3">
                             <div className="text-sm font-medium text-green-800">Correct</div>
                             <div className="text-lg font-bold text-green-600">
-                              {scaleData.questions.filter(q => q.outcome === 'Correct').length}
+                              {scaleData.questions.filter((q: any) => q.outcome === 'Correct').length}
                             </div>
                           </div>
                           <div className="bg-red-50 rounded-md p-3">
                             <div className="text-sm font-medium text-red-800">Incorrect</div>
                             <div className="text-lg font-bold text-red-600">
-                              {scaleData.questions.filter(q => q.outcome === 'Incorrect').length}
+                              {scaleData.questions.filter((q: any) => q.outcome === 'Incorrect').length}
                             </div>
                           </div>
                           <div className="bg-orange-50 rounded-md p-3">
                             <div className="text-sm font-medium text-orange-800">Not Attempted</div>
                             <div className="text-lg font-bold text-orange-600">
-                              {scaleData.questions.filter(q => q.outcome === 'Not attempted').length}
+                              {scaleData.questions.filter((q: any) => q.outcome === 'Not attempted').length}
                             </div>
                           </div>
                         </div>
