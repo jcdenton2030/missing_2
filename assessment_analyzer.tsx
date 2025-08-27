@@ -21,7 +21,7 @@ const AssessmentAnalyzer = () => {
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
       const row: any = {};
-      headers.forEach((header, index) => {
+      headers.forEach((header: string, index: number) => {
         let value = values[index] || '';
         // Try to convert to number if it looks like one
         if (value !== '' && value !== 'NA' && !isNaN(Number(value)) && value !== '1' && value !== '0') {
@@ -77,7 +77,7 @@ const AssessmentAnalyzer = () => {
     // Get all columns before the questions
     const personalColumns = questionStartIndex > 0 ? headers.slice(0, questionStartIndex) : headers.slice(0, 10);
     
-    personalColumns.forEach(column => {
+    personalColumns.forEach((column: string) => {
       personalInfo.push({
         field: column,
         value: student[column] !== undefined ? student[column] : 'N/A'
@@ -102,7 +102,7 @@ const AssessmentAnalyzer = () => {
     // Get question numbers (columns 1-40)
     const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
-    questionColumns.forEach(questionNum => {
+    questionColumns.forEach((questionNum: string) => {
       const strandName = strandNameRow[questionNum];
       const difficulty = difficultyRow[questionNum];
       const percentageCorrect = percentageCorrectRow[questionNum];
@@ -159,7 +159,7 @@ const AssessmentAnalyzer = () => {
     // Get question numbers (columns 1-40)
     const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
-    questionColumns.forEach(questionNum => {
+    questionColumns.forEach((questionNum: string) => {
       const strandName = strandNameRow[questionNum];
       const studentAnswer = student[questionNum];
       
@@ -221,7 +221,7 @@ const AssessmentAnalyzer = () => {
     // Get question numbers (columns 1-40)
     const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
-    questionColumns.forEach(questionNum => {
+    questionColumns.forEach((questionNum: string) => {
       const strand = strandRow[questionNum];
       const strandName = strandNameRow[questionNum];
       const studentAnswer = student[questionNum];
