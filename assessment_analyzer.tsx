@@ -72,7 +72,7 @@ const AssessmentAnalyzer = () => {
     const headers = assessmentData.headers;
     
     // Find where question columns start (looking for column "1")
-    const questionStartIndex = headers.findIndex(h => h === '1');
+    const questionStartIndex = headers.findIndex((h: string) => h === '1');
     
     // Get all columns before the questions
     const personalColumns = questionStartIndex > 0 ? headers.slice(0, questionStartIndex) : headers.slice(0, 10);
@@ -91,16 +91,16 @@ const AssessmentAnalyzer = () => {
     if (!student || !lookupData || !assessmentData) return [];
 
     // Find all the relevant rows in lookup data
-    const strandNameRow = lookupData.data.find(row => row['Question number'] === 'Strand name');
-    const difficultyRow = lookupData.data.find(row => row['Question number'] === 'Question difficulty');
-    const percentageCorrectRow = lookupData.data.find(row => row['Question number'] === 'Percentage correct');
+    const strandNameRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand name');
+    const difficultyRow = lookupData.data.find((row: any) => row['Question number'] === 'Question difficulty');
+    const percentageCorrectRow = lookupData.data.find((row: any) => row['Question number'] === 'Percentage correct');
     
     if (!strandNameRow || !difficultyRow || !percentageCorrectRow) return [];
 
     const scaleData = {};
     
     // Get question numbers (columns 1-40)
-    const questionColumns = assessmentData.headers.filter(h => /^\d+$/.test(h));
+    const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
     questionColumns.forEach(questionNum => {
       const strandName = strandNameRow[questionNum];
@@ -148,7 +148,7 @@ const AssessmentAnalyzer = () => {
     if (!student || !lookupData || !assessmentData) return null;
 
     // Find the strand name row in lookup data
-    const strandNameRow = lookupData.data.find(row => row['Question number'] === 'Strand name');
+    const strandNameRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand name');
     
     if (!strandNameRow) return null;
 
@@ -157,7 +157,7 @@ const AssessmentAnalyzer = () => {
     let totalQuestions = 0;
     
     // Get question numbers (columns 1-40)
-    const questionColumns = assessmentData.headers.filter(h => /^\d+$/.test(h));
+    const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
     questionColumns.forEach(questionNum => {
       const strandName = strandNameRow[questionNum];
@@ -194,7 +194,7 @@ const AssessmentAnalyzer = () => {
         percentageOfTotal: totalQuestions > 0 ? 
           ((data.count / totalQuestions) * 100).toFixed(1) : '0.0'
       }))
-      .filter(item => item.count > 0) // Only show scales with unattempted questions
+      .filter((item: any) => item.count > 0) // Only show scales with unattempted questions
       .sort((a, b) => b.count - a.count); // Sort by count descending
 
     return {
@@ -210,16 +210,16 @@ const AssessmentAnalyzer = () => {
     if (!student || !lookupData || !assessmentData) return [];
 
     // Find the strand row, strand name row, and correct answer row in lookup data
-    const strandRow = lookupData.data.find(row => row['Question number'] === 'Strand');
-    const strandNameRow = lookupData.data.find(row => row['Question number'] === 'Strand name');
-    const correctAnswerRow = lookupData.data.find(row => row['Question number'] === 'Correct Answer');
+    const strandRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand');
+    const strandNameRow = lookupData.data.find((row: any) => row['Question number'] === 'Strand name');
+    const correctAnswerRow = lookupData.data.find((row: any) => row['Question number'] === 'Correct Answer');
     
     if (!strandRow || !strandNameRow || !correctAnswerRow) return [];
 
     const scalePerformance = {};
     
     // Get question numbers (columns 1-40)
-    const questionColumns = assessmentData.headers.filter(h => /^\d+$/.test(h));
+    const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
     
     questionColumns.forEach(questionNum => {
       const strand = strandRow[questionNum];
@@ -282,7 +282,7 @@ const AssessmentAnalyzer = () => {
       return;
     }
 
-    const student = assessmentData.data.find(s => s['Unique ID'] == studentId);
+    const student = assessmentData.data.find((s: any) => s['Unique ID'] == studentId);
     setSelectedStudent(student);
     setSortConfig({}); // Reset sorting when changing students
   };
@@ -793,19 +793,19 @@ const AssessmentAnalyzer = () => {
                           <div className="bg-green-50 rounded-md p-3">
                             <div className="text-sm font-medium text-green-800">Correct</div>
                             <div className="text-lg font-bold text-green-600">
-                              {scaleData.questions.filter(q => q.outcome === 'Correct').length}
+                              {scaleData.questions.filter((q: any) => q.outcome === 'Correct').length}
                             </div>
                           </div>
                           <div className="bg-red-50 rounded-md p-3">
                             <div className="text-sm font-medium text-red-800">Incorrect</div>
                             <div className="text-lg font-bold text-red-600">
-                              {scaleData.questions.filter(q => q.outcome === 'Incorrect').length}
+                              {scaleData.questions.filter((q: any) => q.outcome === 'Incorrect').length}
                             </div>
                           </div>
                           <div className="bg-orange-50 rounded-md p-3">
                             <div className="text-sm font-medium text-orange-800">Not Attempted</div>
                             <div className="text-lg font-bold text-orange-600">
-                              {scaleData.questions.filter(q => q.outcome === 'Not attempted').length}
+                              {scaleData.questions.filter((q: any) => q.outcome === 'Not attempted').length}
                             </div>
                           </div>
                         </div>
