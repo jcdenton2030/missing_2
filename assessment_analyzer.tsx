@@ -97,7 +97,7 @@ const AssessmentAnalyzer = () => {
     
     if (!strandNameRow || !difficultyRow || !percentageCorrectRow) return [];
 
-    const scaleData = {};
+    const scaleData: any = {};
     
     // Get question numbers (columns 1-40)
     const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
@@ -152,7 +152,7 @@ const AssessmentAnalyzer = () => {
     
     if (!strandNameRow) return null;
 
-    const unattemptedByScale = {};
+    const unattemptedByScale: any = {};
     let totalUnattempted = 0;
     let totalQuestions = 0;
     
@@ -216,7 +216,7 @@ const AssessmentAnalyzer = () => {
     
     if (!strandRow || !strandNameRow || !correctAnswerRow) return [];
 
-    const scalePerformance = {};
+    const scalePerformance: any = {};
     
     // Get question numbers (columns 1-40)
     const questionColumns = assessmentData.headers.filter((h: string) => /^\d+$/.test(h));
