@@ -2,29 +2,29 @@ import React, { useState, useRef } from 'react';
 import { Upload, User, BarChart3, FileText, X, ChevronUp, ChevronDown } from 'lucide-react';
 
 const AssessmentAnalyzer = () => {
-  const [assessmentData, setAssessmentData] = useState(null);
-  const [lookupData, setLookupData] = useState(null);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [studentOptions, setStudentOptions] = useState([]);
+  const [assessmentData, setAssessmentData] = useState<any>(null);
+  const [lookupData, setLookupData] = useState<any>(null);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [studentOptions, setStudentOptions] = useState<any[]>([]);
   const [error, setError] = useState('');
-  const [sortConfig, setSortConfig] = useState({}); // Track sorting for each scale
+  const [sortConfig, setSortConfig] = useState<any>({}); // Track sorting for each scale
   const [dragOver, setDragOver] = useState({ assessment: false, lookup: false });
-  const assessmentFileRef = useRef(null);
-  const lookupFileRef = useRef(null);
+  const assessmentFileRef = useRef<HTMLInputElement>(null);
+  const lookupFileRef = useRef<HTMLInputElement>(null);
 
   // Parse CSV function using Papa Parse pattern
-  const parseCSV = (content) => {
+  const parseCSV = (content: string) => {
     const lines = content.trim().split('\n');
     const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-    const data = [];
+    const data: any[] = [];
     
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-      const row = {};
+      const row: any = {};
       headers.forEach((header, index) => {
         let value = values[index] || '';
         // Try to convert to number if it looks like one
-        if (value !== '' && value !== 'NA' && !isNaN(value) && value !== '1' && value !== '0') {
+        if (value !== '' && value !== 'NA' && !isNaN(Number(value)) && value !== '1' && value !== '0') {
           const num = parseFloat(value);
           if (!isNaN(num)) {
             row[header] = num;
@@ -42,7 +42,7 @@ const AssessmentAnalyzer = () => {
     return { headers, data };
   };
 
-  const handleFileUpload = async (file, type) => {
+  const handleFileUpload = async (file: File, type: string) => {
     try {
       const content = await file.text();
       const parsed = parseCSV(content);
@@ -60,7 +60,7 @@ const AssessmentAnalyzer = () => {
         setLookupData(parsed);
       }
       setError('');
-    } catch (err) {
+    } catch (err: any) {
       setError(`Error parsing ${type} file: ${err.message}`);
     }
   };
@@ -287,17 +287,17 @@ const AssessmentAnalyzer = () => {
     setSortConfig({}); // Reset sorting when changing students
   };
 
-  const handleDragOver = (e, type) => {
+  const handleDragOver = (e: React.DragEvent, type: string) => {
     e.preventDefault();
     setDragOver(prev => ({ ...prev, [type]: true }));
   };
 
-  const handleDragLeave = (e, type) => {
+  const handleDragLeave = (e: React.DragEvent, type: string) => {
     e.preventDefault();
     setDragOver(prev => ({ ...prev, [type]: false }));
   };
 
-  const handleDrop = (e, type) => {
+  const handleDrop = (e: React.DragEvent, type: string) => {
     e.preventDefault();
     setDragOver(prev => ({ ...prev, [type]: false }));
     
@@ -320,7 +320,7 @@ const AssessmentAnalyzer = () => {
       direction = 'desc';
     }
     
-    setSortConfig(prev => ({
+    setSortConfig((prev: any) => ({
       ...prev,
       [scaleName]: { column, direction }
     }));
